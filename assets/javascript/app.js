@@ -99,12 +99,16 @@ function renderGameQuestion() {
 // Render game answers
 function renderGameAnswers() {
   var html = '';
-  html += `<ul>`
-  html += `<li><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[0]}</a></li>`
-  html += `<li><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[1]}</a></li>`
-  html += `<li><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[2]}</a></li>`
-  html += `<li><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[3]}</a></li>`
+  html += `<ul class='question'>`
+  html += `<li class='answer' value='1'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[0]}</a></li>`
+  html += `<li class='answer' value='2'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[1]}</a></li>`
+  html += `<li class='answer' value='3'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[2]}</a></li>`
+  html += `<li class='answer' value='4'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[3]}</a></li>`
+  html += `</ul>`
   triviaAnswerSection.html(html);
+  $('.answer').on('click', function() {
+    console.log($(this).attr('value'));
+  });
 }
 
 // GAME FUNCTIONS
@@ -133,8 +137,22 @@ function count() {
   if(gameObject.timer === 0) {
     // Run stop function(defined below)
     stop();
-    done();
   }
+}
+
+// Stop function
+function stop() {
+  // Stop the setInterval variable - game timer no longer running
+  clearInterval(intervalId);
+  // Set timerRunning property to false
+  gameObject.timerRunning = false;
+}
+
+
+// Display answer function
+function displayAnswerPage() {
+  var answer = $('.answer').index();
+  console.log(answer);
 }
 
 // VOID 
