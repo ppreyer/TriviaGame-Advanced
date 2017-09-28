@@ -10,7 +10,9 @@ var gameObject = {
         "red",
         "purple"
       ],
-      correctAnswer: 0
+      correctAnswer: 0,
+      userSelection: '',
+      image: 'assets/images/unc-chapel-hill-logo.jpg'
     },
     {
       title: "What color is UNC blue?",
@@ -20,7 +22,8 @@ var gameObject = {
         "red",
         "purple"
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      userSelection: ''
     },
     {
       title: "What color is UNC blue?",
@@ -30,7 +33,8 @@ var gameObject = {
         "red",
         "purple"
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      userSelection: ''
     },
   ],
   currentQuestion: 0,
@@ -49,8 +53,10 @@ var startButtonSection = $('#start');
 var timeRemainingSection = $('#timeRemaining');
 var triviaQuestionSection = $('#questions');
 var triviaAnswerSection = $('#answers');
+var triviaAnswerImageSection = $('#images');
 var doneButtonSection = $('#done');
 var userScoreSection = $('#userScore');
+var userSelection;
 // Empty array for user score functions
 var arr = [];
 
@@ -74,6 +80,8 @@ function renderStartButtonSection() {
   $('.startGame').on("click", function() {
     // Run the start game function (defined below)
     start();
+    renderGameQuestion();
+    renderGameAnswers();
     // Remove the button
     this.remove();
   });
@@ -100,15 +108,55 @@ function renderGameQuestion() {
 function renderGameAnswers() {
   var html = '';
   html += `<ul class='question'>`
-  html += `<li class='answer' value='1'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[0]}</a></li>`
-  html += `<li class='answer' value='2'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[1]}</a></li>`
-  html += `<li class='answer' value='3'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[2]}</a></li>`
-  html += `<li class='answer' value='4'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[3]}</a></li>`
+  html += `<li class='answer' value='0'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[0]}</a></li>`
+  html += `<li class='answer' value='1'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[1]}</a></li>`
+  html += `<li class='answer' value='2'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[2]}</a></li>`
+  html += `<li class='answer' value='3'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[3]}</a></li>`
   html += `</ul>`
   triviaAnswerSection.html(html);
   $('.answer').on('click', function() {
-    console.log($(this).attr('value'));
+    var answer = $(this).attr('value');
+    gameObject.questions[gameObject.currentQuestion].userSelection = Number(answer);
+    gameObject.questions[gameObject.currentQuestion].userSelection;
+    renderAnswerTitle();
+    renderCorrectAnswer();
+    betweenTriviaQuestions();
   });
+}
+
+function betweenTriviaQuestions() {
+  stop();
+  changeQuestion();  
+  setTimeout(function() {
+    triviaAnswerImageSection.empty();
+    renderGamePieces();
+    start();
+    }, 3000);
+}
+
+// Render answer page title
+function renderAnswerTitle() {
+  triviaQuestionSection.empty();
+  if(gameObject.questions[gameObject.currentQuestion].userSelection === '') { 
+    triviaQuestionSection.html(`<h2>Out of Time!</h2`);
+  } else if(gameObject.questions[gameObject.currentQuestion].userSelection === gameObject.questions[gameObject.currentQuestion].correctAnswer) {
+    triviaQuestionSection.html(`<h2>Correct!</h2`);
+    } else {
+      triviaQuestionSection.html(`<h2>Nope!</h2`);
+      }
+}
+
+function renderCorrectAnswer() {
+  triviaAnswerSection.empty();
+  if(gameObject.questions[gameObject.currentQuestion].userSelection !== gameObject.questions[gameObject.currentQuestion].correctAnswer)
+  triviaAnswerSection.html(`<h2>The correct answer was: ${gameObject.questions[gameObject.currentQuestion].answers[gameObject.questions.correctAnswer]}`);
+  renderCorrectAnswerImage();
+}
+
+function renderCorrectAnswerImage() {
+  var html = '';
+  html += `<img src=${gameObject.questions[gameObject.currentQuestion].image} />`;
+  triviaAnswerImageSection.html(html); 
 }
 
 // GAME FUNCTIONS
@@ -118,6 +166,8 @@ function renderGameAnswers() {
   // Conditional - If the timerRunning property is set to true then...
   if(!gameObject.timerRunning) {
     // setInterval by running count function(defined below) every second
+    gameObject.timer = 30;
+
     intervalId = setInterval(count, 1000);
     // Set timerRunning to true
     gameObject.timerRunning = true;
@@ -134,9 +184,12 @@ function count() {
   // Lower timer by one
   gameObject.timer--;
   // Conditional - if timer is equal to 0...
-  if(gameObject.timer === 0) {
+  if(gameObject.timer < 0) {
     // Run stop function(defined below)
     stop();
+    renderAnswerTitle();
+    renderCorrectAnswer();
+    betweenTriviaQuestions();
   }
 }
 
@@ -148,21 +201,39 @@ function stop() {
   gameObject.timerRunning = false;
 }
 
+function checkUserAnswer() {
+  if(gameObject.questions[gameObject.currentQuestion].userSelection === '') { 
+    gameObject.userBlank++;
+  } else if(gameObject.questions[gameObject.currentQuestion].userSelection === gameObject.questions[gameObject.currentQuestion].correctAnswer) {
+    gameObject.userCorrect++;
+    } else {
+      gameObject.userIncorrect++;
+      }
+}
 
-// Display answer function
-function displayAnswerPage() {
-  var answer = $('.answer').index();
-  console.log(answer);
+function convertStringToInt(string) {
+return Number(string);
+}
+
+function changeQuestion() {
+  if(gameObject.currentQuestion === gameObject.questions.length) {
+    // The game is over
+  } else {
+      gameObject.currentQuestion++;
+    }
 }
 
 // VOID 
-function render() {
+function renderGame() {
   renderTitleSection();
   renderStartButtonSection();
+}
+
+function renderGamePieces() {
   renderGameQuestion();
   renderGameAnswers();
 }
 
-render();
+renderGame();
 
 });
