@@ -1,5 +1,6 @@
 body {
   font-family: 'Roboto', sans-serif;
+  background-image: url('../../assets/images/cloudy-day.png');
 }
 
 * {
@@ -10,11 +11,19 @@ body {
   padding: 50px;
 }
 
-#game{
+#game {
   text-align: center;
   height: 800px;
+  margin: 0 50px;
 }
 
-.panel-body {
-  height: 200px;
+.panel-default,
+#questions,
+#answers {
+  background-image: url('../../assets/images/ricepaper2.png');
+}
+
+#title {
+  background-color: #20B2AA;
+  color: #ffffff;
 }

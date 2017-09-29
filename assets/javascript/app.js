@@ -12,7 +12,7 @@ var gameObject = {
       ],
       correctAnswer: 0,
       userSelection: -1,
-      image: 'assets/images/unc-chapel-hill-logo.jpg'
+      image: 'assets/images/charlotte.png'
     },
     {
       title: "The Andy Griffith Show was set in Mayberry, North Carolina. Andy at times had to go to Raleigh. Mayberry is...",
@@ -23,7 +23,8 @@ var gameObject = {
         "East of Raleigh"
       ],
       correctAnswer: 1,
-      userSelection: -1
+      userSelection: -1,
+      image: 'assets/images/andy.jpg'
     },
     {
       title: "Which of these US Presidents was not born in North Carolina?",
@@ -34,9 +35,22 @@ var gameObject = {
         "Andrew Jackson"
       ],
       correctAnswer: 2,
-      userSelection: -1
+      userSelection: -1,
+      image: 'assets/images/william.jpg'
     },
-  {
+    {
+      title: "Which of these universities is not part of the Research Triangle?",
+      answers: [
+        "UNC",
+        "Duke",
+        "Wake Forest",
+        "NC State"
+      ],
+      correctAnswer: 2,
+      userSelection: -1,
+      image: 'assets/images/wake.png'
+    },
+    {
       title: "Which state does not border North Carolina?",
       answers: [
         "Kentucky",
@@ -45,9 +59,10 @@ var gameObject = {
         "Tennessee"
       ],
       correctAnswer: 0,
-      userSelection: -1
+      userSelection: -1,
+      image: 'assets/images/kentucky.png'
     },
-  {
+    {
       title: "Which is North Carolina's Official State Moto?",
       answers: [
         "First in Flight",
@@ -56,20 +71,10 @@ var gameObject = {
         "To be, rather than to seem"
       ],
       correctAnswer: 3,
-      userSelection: -1
+      userSelection: -1,
+      image: 'assets/images/nc_flag.png'
     },
-  {
-      title: "What color is UNC blue?",
-      answers: [
-        "Duke blue",
-        "Sky blue",
-        "red",
-        "purple"
-      ],
-      correctAnswer: 1,
-      userSelection: -1
-    },
-  {
+    {
       title: "Which basketball program has the most historic and succesful past (choose wisely)?",
       answers: [
         "Duke",
@@ -78,7 +83,8 @@ var gameObject = {
         "Wake Forest"
       ],
       correctAnswer: 2,
-      userSelection: -1
+      userSelection: -1,
+      image: 'assets/images/unc_ram.jpg'
     },
   ],
   correctAnswers: ["Charlotte", "A fictitious place", "William Henry Harrison", "Wake Forest", "Kentucky", "To be, rather than to seem", "UNC"],
@@ -140,16 +146,22 @@ function renderTimeRemainingSection() {
   // Declare empty string html variable
   var html = '';
   // Add h2 tag
-  html += `<h2 id=timeLeft>Time Remaining: ${gameObject.timer}</h2>`;
+  html += `<h4 id=timeLeft>Time Remaining: ${gameObject.timer}</h4>`;
   // Display tag in HTML
   timeRemainingSection.html(html);
+  $('timeRemaining').css({
+    'margin': '15px'
+  })
 }
 
 // Render game question
 function renderGameQuestion() {
   var html = '';
-  html += `<h2>${gameObject.questions[gameObject.currentQuestion].title}</h2>`
+  html += `<h4>${gameObject.questions[gameObject.currentQuestion].title}</h4>`
   triviaQuestionSection.html(html); 
+  $('#questions').css({
+    'margin': '30px'
+  })
 }
 
 // Render game answers
@@ -162,16 +174,23 @@ function renderGameAnswers() {
   html += `<li class='answer' value='3'><a href='#'>${gameObject.questions[gameObject.currentQuestion].answers[3]}</a></li>`
   html += `</ul>`
   triviaAnswerSection.html(html);
-  $('#answers').css({'margin': '0 250px'});
-  $('.answer a').css('text-decoration', 'none');
+  $('#answers').css({'margin': '30px 300px'});
+  $('.answer a').css({
+    'text-decoration': 'none',
+    'color': 'white'
+  });
   $('.answer').css({
       'padding': "10px",
       'border-radius': '25px',
-      'border': '2px solid #4B9CD3',
+      'border': '2px solid #20B2AA',
       'margin-top': '10px',
+      'background': '#20B2AA' 
     });
-  $('.answer').mouseover(function() {
-    $('.answer').css({'transform': 'translateY(4px)'});
+
+ $('.answer').hover(function(){
+        $(this).css('background-color', '#3e8e41');
+        }, function(){
+        $(this).css('background-color', '#20B2AA');
   })
 
     $('.answer').on('click', function() {
@@ -179,45 +198,45 @@ function renderGameAnswers() {
     gameObject.questions[gameObject.currentQuestion].userSelection = Number(answer);
     gameObject.questions[gameObject.currentQuestion].userSelection;
     checkUserAnswer();
-    console.log('gameObject', gameObject);
     renderAnswerTitle();
     renderCorrectAnswer();
+    renderCorrectAnswerImage();
     betweenTriviaQuestions();
     }) 
 }
 
 function betweenTriviaQuestions() {
   stop();
-  if(gameObject.currentQuestion === gameObject.questions.length) {
-    setTimeout(gameOver, 3000);
-  } else {
-      setTimeout(function() {
-        changeQuestion();
-        if(gameObject.currentQuestion === gameObject.questions.length) {
-          gameOver();
-        } else {
-        triviaAnswerImageSection.empty();
-        gameObject.timer = 20;
-        renderTimeRemainingSection();
-        renderGamePieces();
-        start();
-          }
-      }, 3000);
-    }
-} 
+  if(gameObject.currentQuestion === gameObject.questions.length - 1) {
+      setTimeout(gameOver, 3000)
+  }
+  else {
+    setTimeout(function() {
+    triviaAnswerImageSection.empty();
+    gameObject.timer = 20;
+    gameObject.currentQuestion++;
+    renderTimeRemainingSection();
+    renderGamePieces();
+    start();
+  }, 3000);
+  }
+}
 
 // Render answer page title
 function renderAnswerTitle() {
   triviaQuestionSection.empty();
   if(gameObject.currentQuestion === gameObject.questions.length) {
-    triviaAnswerSection.html(`<h2>The correct answer was: ${gameObject.correctAnswers[gameObject.currentQuestion]}`);
+    triviaAnswerSection.html(`<h4>The correct answer was: ${gameObject.correctAnswers[gameObject.currentQuestion]} </h4>`);
   } else if(gameObject.questions[gameObject.currentQuestion].userSelection === '') { 
-      triviaQuestionSection.html(`<h2>Out of Time!</h2`);
+      triviaQuestionSection.html(`<h4>Out of Time!</h4>`);
     } else if(gameObject.questions[gameObject.currentQuestion].userSelection === gameObject.questions[gameObject.currentQuestion].correctAnswer) {
-        triviaQuestionSection.html(`<h2>Correct!</h2`);
+        triviaQuestionSection.html(`<h4>Correct!</h4>`);
       } else {
-          triviaQuestionSection.html(`<h2>Nope!</h2`);
+          triviaQuestionSection.html(`<h4>Nope!</h4>`);
         }
+  $('#questions').css({
+    'margin': '15px'
+  })
 }
 
 function renderCorrectAnswer() {
@@ -225,27 +244,32 @@ function renderCorrectAnswer() {
   if(gameObject.currentQuestion === gameObject.questions.length) {
       triviaAnswerSection.html(`<ul><li>Correct Answers: ${gameObject.userCorrect}</li><li>Incorrect Answers: ${gameObject.userIncorrect}</li><li>Left Blank: ${gameObject.userBlank}</li></ul>`);
   } else if(gameObject.questions[gameObject.currentQuestion].userSelection !== gameObject.questions[gameObject.currentQuestion].correctAnswer) {
-      triviaAnswerSection.html(`<h2>The correct answer was: ${gameObject.correctAnswers[gameObject.currentQuestion]}`);
-      renderCorrectAnswerImage();
+      triviaAnswerSection.html(`<h4>The correct answer was: ${gameObject.correctAnswers[gameObject.currentQuestion]} </h4>`);
     }
+  $('#answers').css({
+    'margin': '15px'
+  })
 }
 
 function renderCorrectAnswerImage() {
   var html = '';
-  html += `<img src=${gameObject.questions[gameObject.currentQuestion].image} />`;
+  html += `<img id='imageResult' src=${gameObject.questions[gameObject.currentQuestion].image} />`;
   triviaAnswerImageSection.html(html); 
+  $('#images').css({
+    'margin': '15px'
+  })
 }
 
 function renderUserScore() {
   triviaQuestionSection.empty();
   triviaAnswerSection.empty();
-  triviaQuestionSection.html(`<h2>All done, below is your score!</h2>`);
+  triviaQuestionSection.html(`<h4>All done, below is your score!</h4>`);
   triviaAnswerSection.html(`<ul><li>Correct Answers: ${gameObject.userCorrect}</li><li>Incorrect Answers: ${gameObject.userIncorrect}</li><li>Left Blank: ${gameObject.userBlank}</li></ul>`);
 }
 
 function renderRestartGameButton() {
   var html = '';
-  html += `<button id='restartButton'>Restart Game</button>`
+  html += `<button class='btn btn-success' id='restartButton'>Restart Game</button>`
   restartGameButtonSection.html(html);
   $('#restartButton').on('click', function() {
     this.remove();
@@ -282,6 +306,7 @@ function count() {
     gameObject.userBlank++;
     renderAnswerTitle();
     renderCorrectAnswer();
+    renderCorrectAnswerImage()
     betweenTriviaQuestions();
   }
 }
@@ -327,10 +352,12 @@ function resetGame() {
   triviaQuestionSection.empty();
   triviaAnswerSection.empty();
   userScoreSection.empty();
+  triviaAnswerImageSection.empty();
   gameObject.currentQuestion = 0;
   gameObject.userCorrect = 0;
   gameObject.userIncorrect = 0;
   gameObject.userBlank = 0;
+  renderTimeRemainingSection();
   renderGamePieces();
   start();
 }
