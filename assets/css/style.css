@@ -17,6 +17,9 @@ body {
   margin: 0 50px;
 }
 
+.panel-default {
+  width: auto;
+}
 .panel-default,
 #questions,
 #answers {
