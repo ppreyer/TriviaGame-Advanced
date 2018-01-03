@@ -1,2 +1,3 @@
-# TriviaGame-Advanced
-Harder version of the trivia game.
+# Trivia Game: North Carolina Facts
+
+
